@@ -1,0 +1,37 @@
+
+							~ PSEUDO-CODE ~
+
+1.	Ouvrir fichier d'entree et connecter sa sortie a l'entree de la 1ere commande
+	- ouvrir fichier
+	- verifier nb d'argt pour s'assurer qu'il y a au moins une commande
+
+2.	Creer une boucle sur les commandes de la 1ere a l'avant-derniere. A chaque iteration :
+
+	a) creer un pipe : connecter la sortie du processus actuel a l'entree du suivant
+	
+	b) creer un processus enfant via fork(). Si succes :
+		- rediriger entree standard
+			# pour 1er processus : rediriger depuis le fichier d'entree
+			# pour les suivants : rediriger depuis la sortie du pipe precedent
+		- rediriger sortie standard
+			# vers l'entree du pipe qui vient d'etre cree
+		- fermer les descripteurs inutilises
+		- executer commande avec execve
+		
+	c) dans le parent :
+		- fermer les descripteurs inutilises pour eviter les fuites
+			# fermer entree standart redirigee
+			# fermer sortie du pipe actuel
+		- conserver entree du pipe actuel pour le prochain processus
+	
+3.	Traiter la derniere commande
+	a) creer un processus enfant
+	b) rediriger l'entree standard vers le pipe precedent
+	c) ne pas rediriger la sortie standard : par defaut elle est a l'ecran
+	d) executer la commande avec execve
+
+4.	Dans le processus parent :
+	a) fermer le dernier descripteur de fichier inutilise
+	b) attendre la fin de tous les processus enfants avec wait
+
+
