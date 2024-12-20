@@ -1,0 +1,3 @@
+Ceci est mon fichier de texte.
+Bonjour.
+Au revoir.
