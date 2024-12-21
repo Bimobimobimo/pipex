@@ -6,7 +6,7 @@
 /*   By: lcollong <lcollong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 15:45:54 by lcollong          #+#    #+#             */
-/*   Updated: 2024/12/20 18:18:03 by lcollong         ###   ########.fr       */
+/*   Updated: 2024/12/21 09:22:56 by lcollong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void	command_parsing(t_pipex *pipex, int argc, char **argv, char **env)
 {
-	pipex->tab = ft_split(argv + 2, " ");
+	pipex->tab = ft_split(*(argv + 2), ' ');
 	pipex->cmd_nb = argc - 3; // - nom programme, - nom fichier entree et - nom fichier sortie
-	processus_creation(pipex, pipex->cmd_nb, pipex->tab, env);
+	processus_creation(pipex, pipex->cmd_nb, env);
 	last_cmd(pipex, pipex->cmd_nb, pipex->tab, env);
 	free_tab(pipex->tab, pipex->cmd_nb);
 }
 
-void	processus_creation(t_pipex *pipex, int cmd_n, char **tab, char **env)
+void	processus_creation(t_pipex *pipex, int cmd_n, char **env)
 {
 	pipex->prev_fd = -1; // initialise a -1 car a l'appel de processus_creation, il n'y a pas de pipe precedent
 	pipex->cmd_i = 0;

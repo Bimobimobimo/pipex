@@ -6,7 +6,7 @@
 /*   By: lcollong <lcollong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 17:03:37 by lcollong          #+#    #+#             */
-/*   Updated: 2024/12/20 18:15:14 by lcollong         ###   ########.fr       */
+/*   Updated: 2024/12/21 10:02:49 by lcollong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <fcntl.h>
+# include "libft.h"
+# include "printf.h"
 
 typedef struct	s_pipex
 {
@@ -33,13 +35,13 @@ typedef struct	s_pipex
 // ~ Parsing & fork ~
 
 void	command_parsing(t_pipex *pipex, int argc, char **argv, char **env);
-void	processus_creation(t_pipex *pipex, int cmd_n, char **tab, char **env);
+void	processus_creation(t_pipex *pipex, int cmd_n, char **env);
 void	fork_success(t_pipex *pipex);
 
 // ~ Path & execution ~
 
 void	get_path_1(t_pipex *pipex, char **env);
-void	get_path_2(t_pipex *pipex, char **env, char *path_env);
+void	get_path_2(t_pipex *pipex, char *path_env);
 void	get_command_path(t_pipex *pipex, char **path_file, char *path);
 void	execution(t_pipex *pipex, char **path_file, char *cmd_path, int j);
 
@@ -49,5 +51,6 @@ void	last_fork_success(t_pipex *pipex, int argc, char **argv);
 // ~ Utils ~
 
 void	error_exit(char *s);
+void	free_tab(char **tab, int j);
 
 #endif

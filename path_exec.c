@@ -6,7 +6,7 @@
 /*   By: lcollong <lcollong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 15:49:46 by lcollong          #+#    #+#             */
-/*   Updated: 2024/12/20 17:46:10 by lcollong         ###   ########.fr       */
+/*   Updated: 2024/12/21 10:16:05 by lcollong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ void	execution(t_pipex *pipex, char **path_file, char *cmd_path, int j)
 {
 	if (access(cmd_path, X_OK) == 0)
 	{
-		execve(cmd_path, pipex->tab[pipex->cmd_i], pipex->env);
+		execve(cmd_path, &pipex->tab[pipex->cmd_i], pipex->env);
 		free(cmd_path);
 		free_tab(path_file, j + 1);
+		free_tab(pipex->env, 2);
 		error_exit("Execution error\n");
 	}
 	free(cmd_path);
+	free_tab(pipex->env, 2);
 }
 
 void	get_command_path(t_pipex *pipex, char **path_file, char *path)
@@ -37,16 +39,17 @@ void	get_command_path(t_pipex *pipex, char **path_file, char *path)
 	{
 		tmp_path = ft_strjoin(path_file[j], "/");
 		if (!tmp_path)
-			return (free_tab(path_file, j), error_exit("Malloc error\n"));
+			return (free_tab(path_file, j), free_tab(pipex->env, 2), error_exit("Malloc error\n"));
 		cmd_path = ft_strjoin(tmp_path, pipex->tab[pipex->cmd_i]);
 		free(tmp_path);
 		if (!cmd_path)
-			return (free_tab(path_file, j), error_exit("Malloc error\n"));
+			return (free_tab(path_file, j), free_tab(pipex->env, 2), error_exit("Malloc error\n"));
 		execution(pipex, path_file, cmd_path, j);
 		j++;
 	}
 	free(path);
-	free_tab(path_file);
+	free_tab(path_file, j);
+	free_tab(pipex->env, 2);
 	error_exit("Command not found in PATH\n");
 }
 
@@ -62,17 +65,21 @@ void	get_path_1(t_pipex *pipex, char **env)
 		if (ft_strncmp(env[k], "PATH=", 5) == 0)
 		{
 			path_env = env[k] + 5;
-			pipex->env = path_env;
+			pipex->env = malloc(sizeof(char *) * 2); //TODO nbreux pbs avec free_tab
+			if (!pipex->env)
+				error_exit("Malloc error\n");
+			pipex->env[0] = ft_strdup(path_env);
+			pipex->env[1] = NULL;
 			break;
 		}
 		k++;
 	}
 	if (!path_env)
 		error_exit("Error : PATH not found\n");
-	get_path_2(pipex, env, path_env);
+	get_path_2(pipex, path_env);
 }
 
-void	get_path_2(t_pipex *pipex, char **env, char *path_env)
+void	get_path_2(t_pipex *pipex, char *path_env)
 {
 	char	*path;
 	char	**path_file;
@@ -81,8 +88,12 @@ void	get_path_2(t_pipex *pipex, char **env, char *path_env)
 	path = ft_strdup(path_env);
 	if (!path)
 		error_exit("Malloc error\n");
-	path_file = ft_split(path, ":");
+	path_file = ft_split(path, ':');
 	if (!path_file)
-		return(free(path), error_exit("Malloc error\n"));
+	{
+		free(path);
+		free_tab(pipex->env, 2);
+		error_exit("Malloc error\n");
+	}
 	get_command_path(pipex, path_file, path);
 }

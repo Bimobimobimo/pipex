@@ -6,7 +6,7 @@
 /*   By: lcollong <lcollong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 17:03:34 by lcollong          #+#    #+#             */
-/*   Updated: 2024/12/20 15:50:22 by lcollong         ###   ########.fr       */
+/*   Updated: 2024/12/21 10:01:15 by lcollong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	pipex;
 
-	if (argc >= 4)
+	if (argc > 4)
 	{
 		pipex.fd_file = open(argv[1], O_RDONLY);
 		if (pipex.fd_file == -1)
@@ -29,8 +29,8 @@ int	main(int argc, char **argv, char **env)
 	}
 	else
 	{
-		perror("Argument error : rerun with <./pipex> <file> ");
-		perror("<at least 2 commands> <new file>");
+		ft_putstr_fd("Argument error : rerun with <./pipex> <file> ", 2);
+		ft_putstr_fd("<at least 2 commands> <new file>", 2);
 		exit(EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
